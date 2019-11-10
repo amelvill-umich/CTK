@@ -22,9 +22,10 @@
 #define __vtkDiscretizableColorTransferChart_h
 
 #include "ctkVisualizationVTKCoreExport.h"
+#include "ctkUtils.h"
 
+#include "vtkSmartPointer.h"
 #include <vtkChartXY.h>
-#include <vtkSmartPointer.h>
 
 class vtkCompositeControlPointsItem;
 class vtkCompositeTransferFunctionItem;

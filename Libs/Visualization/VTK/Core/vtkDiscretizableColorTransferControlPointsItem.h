@@ -22,6 +22,8 @@
 #define __vtkDiscretizableColorTransferControlPointsItem_h
 
 #include "ctkVisualizationVTKCoreExport.h"
+#include "ctkUtils.h"
+
 #include <vtkCompositeControlPointsItem.h>
 
 class vtkContextMouseEvent;

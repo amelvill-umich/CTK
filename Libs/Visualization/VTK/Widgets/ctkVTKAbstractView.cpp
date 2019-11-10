@@ -118,7 +118,7 @@ void ctkVTKAbstractViewPrivate::setupRendering()
     }
   this->RenderWindow->SetMultiSamples(nSamples);
   this->RenderWindow->StereoCapableWindowOn();
-  this->VTKWidget->SetRenderWindow(this->RenderWindow);
+  this->VTKWidget->setRenderWindow(this->RenderWindow);
 }
 
 //---------------------------------------------------------------------------

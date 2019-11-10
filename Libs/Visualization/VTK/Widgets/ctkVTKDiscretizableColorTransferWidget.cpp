@@ -165,13 +165,13 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 #ifdef CTK_USE_QVTKOPENGLWIDGET
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> renwin =
     vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-  this->ScalarsToColorsView->SetRenderWindow(renwin);
+  this->ScalarsToColorsView->setRenderWindow(renwin);
 #endif
 
   this->scalarsToColorsContextView->SetRenderWindow(
-    this->ScalarsToColorsView->GetRenderWindow());
+    this->ScalarsToColorsView->renderWindow());
   this->scalarsToColorsContextView->SetInteractor(
-    this->ScalarsToColorsView->GetInteractor());
+    this->ScalarsToColorsView->interactor());
   this->scalarsToColorsContextView->GetScene()->AddItem(
     this->scalarsToColorsContextItem.Get());
 
@@ -365,7 +365,7 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   QColor selected = QColor::fromRgbF(r, g, b);
   self->nanButton->setColor(selected);
 
-  self->ScalarsToColorsView->GetInteractor()->Render();
+  self->ScalarsToColorsView->interactor()->Render();
 }
 
 // ----------------------------------------------------------------------------
@@ -743,7 +743,7 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
   Q_D(ctkVTKDiscretizableColorTransferWidget);
   d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
   this->copyColorTransferFunction(ctf);
-  d->ScalarsToColorsView->GetInteractor()->Render();
+  d->ScalarsToColorsView->interactor()->Render();
 }
 
 // ----------------------------------------------------------------------------

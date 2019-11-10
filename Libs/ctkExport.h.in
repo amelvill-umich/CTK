@@ -12,6 +12,10 @@
 
 #include <QtGlobal>
 
+#ifndef VTK_OVERRIDE
+#define VTK_OVERRIDE override;
+#endif VTK_OVERRIDE
+
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(@MY_LIBNAME@_EXPORTS)
 #    define @MY_LIBRARY_EXPORT_DIRECTIVE@ Q_DECL_EXPORT

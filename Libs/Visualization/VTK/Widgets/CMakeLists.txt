@@ -1,6 +1,36 @@
 project(CTKVisualizationVTKWidgets)
 
-include(${VTK_USE_FILE})
+set(VTK_LIBRARIES "")
+find_package(VTK COMPONENTS
+    ChartsCore
+    CommonCore
+    CommonDataModel
+    #Context2D
+    FiltersCore
+    FiltersGeneral
+    FiltersModeling
+    FiltersSources
+    GUISupportQt
+    ImagingStatistics
+    IOLegacy
+    IOXML
+    InfovisCore
+    InfovisLayout
+    InteractionStyle
+    RenderingContextOpenGL2
+    RenderingCore
+    RenderingFreeType
+    RenderingOpenGL2
+    ViewsCore
+    ViewsInfovis
+    OPTIONAL_COMPONENTS
+    TestingRendering
+    )
+
+
+if (VTK_VERSION VERSION_LESS "8.90")
+  include(${VTK_USE_FILE})
+endif ()
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -116,28 +146,28 @@ set(KIT_resources
 
 # Set VTK_LIBRARIES variable
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkChartsCore
+  set(VTK_LIBRARIESx
     vtkCommonMath
+    #vtkChartsCore
     vtkFiltersSources
     vtkImagingGeneral
     vtkImagingStatistics
     vtkInteractionWidgets
     vtkRenderingContext2D
-    vtkViewsContext2D
+    #vtkViewsContext2D
     vtkGUISupportQt
     )
   if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
-    list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIESx vtkRenderingContext${VTK_RENDERING_BACKEND})
   endif()
   if(TARGET vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
-    list(APPEND VTK_LIBRARIES vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIESx vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
   endif()
     if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-      set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkWrappingPythonCore)
+      set(VTK_LIBRARIESx ${VTK_LIBRARIESx} vtkWrappingPythonCore)
     endif()
 else()
-  set(VTK_LIBRARIES
+  set(VTK_LIBRARIESx
     QVTK
     )
 endif()
@@ -171,13 +201,13 @@ if(${CTK_USE_CHARTS})
       Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
   if(${VTK_VERSION_MAJOR} GREATER 5)
-    set(VTK_LIBRARIES
-      vtkChartsCore
-      ${VTK_LIBRARIES})
+    set(VTK_LIBRARIESx
+      #vtkChartsCore
+      ${VTK_LIBRARIESx})
   else()
-    set(VTK_LIBRARIES
+    set(VTK_LIBRARIESx
       vtkCharts
-      ${VTK_LIBRARIES})
+      ${VTK_LIBRARIESx})
   endif()
   add_definitions(-DCTK_USE_CHARTS)
 endif()
@@ -203,33 +233,40 @@ endif()
 
 # Prefer QVTKOpenGLWidget to QVTKWidget when using Qt5
 set(_use_qvtkopenglwidget 1)
-if(CTK_QT_VERSION VERSION_LESS "5"
-  OR VTK_VERSION VERSION_LESS "8"
-  OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
-  set(_use_qvtkopenglwidget 0)
-endif()
+if (VTK_VERSION VERSION_LESS "8.90")
+  if(CTK_QT_VERSION VERSION_LESS "5"
+    OR VTK_VERSION VERSION_LESS "8"
+    OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
+    set(_use_qvtkopenglwidget 0)
+  endif()
+endif ()
 
 if(_use_qvtkopenglwidget)
   add_definitions(-DCTK_USE_QVTKOPENGLWIDGET)
 endif()
 
 # Detect if QVTKOpenGLNativeWidget.h is available
-set(_has_QVTKOpenGLNativeWidget_h 0)
-if(_use_qvtkopenglwidget)
-  set(_msg "Checking if QVTKOpenGLNativeWidget.h exists")
-  message(STATUS "${_msg}")
-  foreach(include_dir IN ITEMS ${vtkGUISupportQt_INCLUDE_DIRS})
-    if(EXISTS "${include_dir}/QVTKOpenGLNativeWidget.h")
-      set(_has_QVTKOpenGLNativeWidget_h 1)
-      break()
+if (VTK_VERSION VERSION_LESS "8.90")
+  set(_has_QVTKOpenGLNativeWidget_h 0)
+  if(_use_qvtkopenglwidget)
+    set(_msg "Checking if QVTKOpenGLNativeWidget.h exists")
+    message(STATUS "${_msg}")
+    foreach(include_dir IN ITEMS ${vtkGUISupportQt_INCLUDE_DIRS})
+      if(EXISTS "${include_dir}/QVTKOpenGLNativeWidget.h")
+        set(_has_QVTKOpenGLNativeWidget_h 1)
+        break()
+      endif()
+    endforeach()
+    if(_has_QVTKOpenGLNativeWidget_h)
+      message(STATUS "${_msg} - found")
+    else()
+      message(STATUS "${_msg} - not found")
     endif()
-  endforeach()
-  if(_has_QVTKOpenGLNativeWidget_h)
-    message(STATUS "${_msg} - found")
-  else()
-    message(STATUS "${_msg} - not found")
   endif()
-endif()
+else()
+  set(_has_QVTKOpenGLNativeWidget_h 1)
+endif ()
+
 
 if(_has_QVTKOpenGLNativeWidget_h)
   add_definitions(-DCTK_HAS_QVTKOPENGLNATIVEWIDGET_H)
@@ -241,7 +278,7 @@ ctkMacroBuildLib(
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
-  TARGET_LIBRARIES ${KIT_target_libraries}
+  TARGET_LIBRARIES ${KIT_target_libraries}  ${VTK_LIBRARIES}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
@@ -269,6 +306,14 @@ if(CTK_WRAP_PYTHONQT_LIGHT)
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
 endif()
+
+  if (NOT VTK_VERSION VERSION_LESS "8.90.0")
+    vtk_module_autoinit(
+      TARGETS ${PROJECT_NAME}
+      MODULES ${VTK_LIBRARIES}
+      )
+  endif()
+
 
 # Plugins
 if(CTK_BUILD_QTDESIGNER_PLUGINS)

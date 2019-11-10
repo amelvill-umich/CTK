@@ -86,17 +86,17 @@ void ctkVTKChartViewPrivate::init()
 {
   Q_Q(ctkVTKChartView);
 #ifdef CTK_USE_QVTKOPENGLWIDGET
-  q->SetRenderWindow(this->RenderWindow);
+  q->setRenderWindow(this->RenderWindow);
   this->ContextView->SetRenderWindow(this->RenderWindow);
 #endif
-  this->ContextView->SetInteractor(q->GetInteractor());
-  q->SetRenderWindow(this->ContextView->GetRenderWindow());
+  this->ContextView->SetInteractor(q->interactor());
+  q->setRenderWindow(this->ContextView->GetRenderWindow());
   // low def for now (faster)
   //q->GetRenderWindow()->SetMultiSamples(0);
   //vtkOpenGLContextDevice2D::SafeDownCast(this->ContextView->GetContext()->GetDevice())
   //                                       ->SetStringRendererToQt();
 #ifndef Q_WS_X11
-  q->GetRenderWindow()->SetLineSmoothing(true);
+  q->renderWindow()->SetLineSmoothing(true);
 #endif
   this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
   this->Chart->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::RIGHT_BUTTON);

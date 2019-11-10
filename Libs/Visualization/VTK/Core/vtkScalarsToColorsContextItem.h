@@ -22,6 +22,7 @@
 #define __vtkScalarsToColorsContextItem_h
 
 #include "ctkVisualizationVTKCoreExport.h"
+#include "ctkUtils.h"
 
 #include <vtkAbstractContextItem.h>
 #include <vtkNew.h>

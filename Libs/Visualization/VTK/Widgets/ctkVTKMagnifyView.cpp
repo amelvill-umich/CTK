@@ -174,7 +174,7 @@ void ctkVTKMagnifyViewPrivate::connectRenderWindow(ctkVTKOpenGLNativeWidget * wi
   Q_ASSERT(widget);
   Q_ASSERT(this->ObserveRenderWindowEvents);
 
-  vtkRenderWindow * renderWindow = widget->GetRenderWindow();
+  vtkRenderWindow * renderWindow = widget->renderWindow();
   if (renderWindow)
     {
     this->qvtkConnect(renderWindow, vtkCommand::EndEvent,
@@ -187,7 +187,7 @@ void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(ctkVTKOpenGLNativeWidget *
 {
   Q_ASSERT(widget);
 
-  vtkRenderWindow * renderWindow = widget->GetRenderWindow();
+  vtkRenderWindow * renderWindow = widget->renderWindow();
   if (renderWindow)
     {
     this->qvtkDisconnect(renderWindow, vtkCommand::EndEvent,
@@ -253,7 +253,7 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   Q_Q(ctkVTKMagnifyView);
 
   // Retrieve buffer of given QVTKWidget from its render window
-  vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->GetRenderWindow();
+  vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->renderWindow();
   if (!renderWindow)
     {
     return;

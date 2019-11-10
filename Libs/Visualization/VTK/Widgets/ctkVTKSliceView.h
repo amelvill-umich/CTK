@@ -102,7 +102,7 @@ public Q_SLOTS:
   /// Set image data
   /// \sa vtkLightBoxRendererManager::SetImageData
 #if (VTK_MAJOR_VERSION <= 5)
-  void setImageData(vtkImageData* newImageData);
+  //void setImageData(vtkImageData* newImageData);
 #else
   void setImageDataConnection(vtkAlgorithmOutput* newImageDataPort);
 #endif
